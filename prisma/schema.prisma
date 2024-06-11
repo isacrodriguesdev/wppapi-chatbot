@@ -1,0 +1,173 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id        String     @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  password  String?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  users     User[]
+  branchs   Branch[]
+  employees Employee[]
+  schedules Schedule[]
+  services  Service[]
+
+  @@map("companies")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String
+  phone     String
+  avatar    String?
+  email     String?
+  companyId String
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules Schedule[]
+
+  @@index([companyId])
+  @@map("users")
+}
+
+model Employee {
+  id        String     @id @default(cuid())
+  name      String
+  phone     String
+  avatar    String?
+  email     String?
+  password  String?
+  companyId String     @map("company_id")
+  branchId  String     @map("branch_id")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  branch    Branch     @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules Schedule[]
+
+  @@map("employees")
+}
+
+model Schedule {
+  id         String    @id @default(cuid())
+  status     String
+  branchId   String    @map("branch_id")
+  userId     String    @map("user_id")
+  companyId  String    @map("company_id")
+  serviceId  String    @map("service_id")
+  employeeId String?   @map("employee_id")
+  date       DateTime
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  company    Company   @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  service    Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  branch     Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("schedules")
+}
+
+model OperatingDay {
+  id        String   @id @default(cuid())
+  companyId String   @map("company_id")
+  branchId  String   @map("branch_id")
+  weekDay   String   @map("week_day")
+  startTime String   @map("start_time")
+  endTime   String   @map("end_time")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("operating_days")
+}
+
+model Service {
+  id        String     @id @default(cuid())
+  branchId  String     @map("branch_id")
+  companyId String     @map("company_id")
+  name      String
+  duration  Int
+  price     Float
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  branch    Branch     @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules Schedule[]
+
+  @@map("services")
+}
+
+model Branch {
+  id            String         @id @default(cuid())
+  companyId     String         @map("company_id")
+  name          String
+  phone         String
+  username      String?        @unique()
+  password      String?
+  zipCode       String?        @map("zip_code")
+  complement    String?        @map("complement")
+  state         String?        @map("state")
+  city          String?        @map("city")
+  geoLocation   String?        @map("geo_location")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules     Schedule[]
+  operatingDays OperatingDay[]
+  services      Service[]
+  employees     Employee[]
+  messages      Message[]
+
+  @@map("branches")
+}
+
+model DefaultMessage {
+  id        String   @id @default(cuid())
+  name      String
+  content   String
+  actions   String[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("default_messages")
+}
+
+model Message {
+  id             String          @id @default(cuid())
+  branchId       String          @map("branch_id")
+  name           String
+  content        String
+  group          String?
+  actions        String[]
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  messageOptions MessageOption[]
+  branch         Branch          @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("messages")
+}
+
+model MessageOption {
+  id        String   @id @default(cuid())
+  index     Int
+  messageId String   @map("message_id")
+  child     String?
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("message_options")
+}
