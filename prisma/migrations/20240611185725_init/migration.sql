@@ -77,8 +77,8 @@ CREATE TABLE "services" (
     "branch_id" TEXT NOT NULL,
     "company_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "duration" INTEGER NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
+    "duration" INTEGER,
+    "price" DOUBLE PRECISION,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -91,13 +91,11 @@ CREATE TABLE "branches" (
     "company_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
-    "username" TEXT,
-    "password" TEXT,
     "zip_code" TEXT,
     "complement" TEXT,
     "state" TEXT,
     "city" TEXT,
-    "geo_location" TEXT,
+    "geo_location" TEXT[],
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -145,9 +143,6 @@ CREATE TABLE "message_options" (
 
 -- CreateIndex
 CREATE INDEX "users_companyId_idx" ON "users"("companyId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "branches_username_key" ON "branches"("username");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "companies"("id") ON DELETE CASCADE ON UPDATE CASCADE;

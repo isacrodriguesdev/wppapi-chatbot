@@ -98,8 +98,8 @@ model Service {
   branchId  String     @map("branch_id")
   companyId String     @map("company_id")
   name      String
-  duration  Int
-  price     Float
+  duration  Int?
+  price     Float?
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
   branch    Branch     @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -114,13 +114,11 @@ model Branch {
   companyId     String         @map("company_id")
   name          String
   phone         String
-  username      String?        @unique()
-  password      String?
   zipCode       String?        @map("zip_code")
   complement    String?        @map("complement")
   state         String?        @map("state")
   city          String?        @map("city")
-  geoLocation   String?        @map("geo_location")
+  geoLocation   String[]       @map("geo_location")
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
   company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
