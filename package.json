@@ -6,6 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "docker:rm": "docker compose down && docker rmi isacrodriguesdev/wppapi:latest",
+    "docker:build": "docker build -t isacrodriguesdev/wppapi:latest .",
+    "docker:push": "docker push isacrodriguesdev/wppapi:latest",
+    "docker:run": "docker compose down && docker compose up",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -28,6 +32,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^5.14.0",
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"

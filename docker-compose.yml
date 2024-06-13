@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  app:
+    image: isacrodriguesdev/wppapi:latest
+    container_name: wppapi
+    ports:
+      - "3333:3000"
+    env_file:
+      - stack.env
