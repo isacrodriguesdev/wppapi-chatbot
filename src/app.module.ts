@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { FetchAnalyticalData } from "src/app/usecases/fetch-analytical-data/fetch-analytical-data";
 import { FetchLatestAppointment } from "src/app/usecases/fetch-latest-appointment/fetch-latest-appointment";
 import { LoginAccount } from "src/app/usecases/login-account/login-account";
 import { UpdateAppointment } from "src/app/usecases/update-appointment/update-appointment";
@@ -11,7 +12,7 @@ import { EncryptionModule } from "src/shared/infra/encryption/encryption.module"
 @Module({
   imports: [DatabaseModule, AuthModule, EncryptionModule],
   controllers: [AppController, AccountController],
-  providers: [LoginAccount, FetchLatestAppointment, UpdateAppointment],
+  providers: [LoginAccount, FetchLatestAppointment, UpdateAppointment, FetchAnalyticalData],
   exports: [],
 })
 export class AppModule {}

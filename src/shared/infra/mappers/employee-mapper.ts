@@ -1,14 +1,18 @@
 import { Employee, IEmployee } from "src/domain/entities/employee";
 
+interface IEmployeeExtended extends IEmployee {
+  branchName: string;
+}
+
 export class EmployeeMapper {
-  static toDTO(employee: Employee): Partial<IEmployee> {
+  static toDTO(employee: Employee): Partial<IEmployeeExtended> {
     return {
       id: employee.id,
       name: employee.name,
       email: employee.email,
       phone: employee.phone,
       avatar: employee.avatar,
-      branchId: employee.branchId,
+      branchName: employee.branch.name,
     };
   }
 }

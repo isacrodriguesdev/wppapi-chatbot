@@ -8,11 +8,15 @@ import { PrismaService } from "src/shared/infra/database/prisma/prisma.service";
 export class PrismaEmployeeRepository implements EmployeeRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findByEmail(email: string): Promise<Employee> {
+  async findByEmail(email: string): Promise<Employee | null> {
     const employee = await this.prismaService.employee.findFirst({
       where: { email },
       include: { branch: true },
     });
+
+    if (!employee) {
+      return null;
+    }
 
     return PrismaEmployeeRepositoryMapper.toDomain(employee);
   }

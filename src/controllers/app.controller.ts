@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Put, Request, UseGuards } from "@nestjs/common";
+import { FetchAnalyticalData } from "src/app/usecases/fetch-analytical-data/fetch-analytical-data";
 import { FetchLatestAppointment } from "src/app/usecases/fetch-latest-appointment/fetch-latest-appointment";
 import { UpdateAppointment } from "src/app/usecases/update-appointment/update-appointment";
 import { IAppointment } from "src/domain/entities/appointment";
@@ -10,6 +11,7 @@ export class AppController {
   constructor(
     private readonly fetchLatestAppointment: FetchLatestAppointment,
     private readonly updateAppointment: UpdateAppointment,
+    private readonly fetchAnalyticalData: FetchAnalyticalData,
   ) {}
 
   @Get()
@@ -18,7 +20,7 @@ export class AppController {
   }
 
   @UseGuards(JwtGuard)
-  @Get("/appointments/latest")
+  @Get("appointments/latest")
   async _fetchLatestAppointment(@Request() request: any): Promise<Partial<IAppointment>[]> {
     const user = request.user;
 
@@ -27,9 +29,17 @@ export class AppController {
   }
 
   @UseGuards(JwtGuard)
-  @Put("/appointments/:id")
+  @Put("appointments/:id")
   async _updateAppointment(@Param() params: any, @Body() body: any): Promise<void> {
     const { id } = params;
     await this.updateAppointment.execute(id, body);
+  }
+
+  // FetchAnalyticalData
+  @UseGuards(JwtGuard)
+  @Get("analytical-data")
+  async _fetchAnalyticalData(@Request() request: any): Promise<any> {
+    const user = request.user;
+    return this.fetchAnalyticalData.execute(user.branchId);
   }
 }
