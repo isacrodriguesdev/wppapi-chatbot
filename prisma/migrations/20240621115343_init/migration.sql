@@ -5,6 +5,7 @@ CREATE TABLE "companies" (
     "phone" TEXT NOT NULL,
     "email" TEXT,
     "password" TEXT,
+    "active" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -33,6 +34,8 @@ CREATE TABLE "employees" (
     "avatar" TEXT,
     "email" TEXT,
     "password" TEXT,
+    "active" BOOLEAN NOT NULL DEFAULT true,
+    "roles" TEXT[] DEFAULT ARRAY['employee']::TEXT[],
     "company_id" TEXT NOT NULL,
     "branch_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -44,7 +47,7 @@ CREATE TABLE "employees" (
 -- CreateTable
 CREATE TABLE "schedules" (
     "id" TEXT NOT NULL,
-    "status" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'scheduled',
     "branch_id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "company_id" TEXT NOT NULL,
@@ -89,6 +92,7 @@ CREATE TABLE "services" (
 CREATE TABLE "branches" (
     "id" TEXT NOT NULL,
     "company_id" TEXT NOT NULL,
+    "active" BOOLEAN NOT NULL DEFAULT true,
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "zip_code" TEXT,
@@ -142,7 +146,46 @@ CREATE TABLE "message_options" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "companies_id_key" ON "companies"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "companies_email_key" ON "companies"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_id_key" ON "users"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
 CREATE INDEX "users_companyId_idx" ON "users"("companyId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "employees_id_key" ON "employees"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "employees_email_key" ON "employees"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "schedules_id_key" ON "schedules"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "operating_days_id_key" ON "operating_days"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "services_id_key" ON "services"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "branches_id_key" ON "branches"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "default_messages_id_key" ON "default_messages"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "messages_id_key" ON "messages"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "message_options_id_key" ON "message_options"("id");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "companies"("id") ON DELETE CASCADE ON UPDATE CASCADE;

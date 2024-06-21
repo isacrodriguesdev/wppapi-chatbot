@@ -9,11 +9,12 @@ datasource db {
 }
 
 model Company {
-  id        String     @id @default(cuid())
+  id        String     @id @unique @default(cuid())
   name      String
   phone     String
-  email     String?
+  email     String?    @unique // new 
   password  String?
+  active    Boolean    @default(true)
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
   users     User[]
@@ -26,7 +27,7 @@ model Company {
 }
 
 model User {
-  id        String     @id @default(cuid())
+  id        String     @id @unique @default(cuid())
   name      String
   phone     String
   avatar    String?
@@ -42,12 +43,14 @@ model User {
 }
 
 model Employee {
-  id        String     @id @default(cuid())
+  id        String     @id @unique @default(cuid())
   name      String
   phone     String
   avatar    String?
   email     String?    @unique
   password  String?
+  active    Boolean    @default(true)
+  roles     String[]   @default(["employee"])
   companyId String     @map("company_id")
   branchId  String     @map("branch_id")
   createdAt DateTime   @default(now()) @map("created_at")
@@ -60,8 +63,8 @@ model Employee {
 }
 
 model Schedule {
-  id         String    @id @default(cuid())
-  status     String
+  id         String    @id @unique @default(cuid())
+  status     String    @default("scheduled")
   branchId   String    @map("branch_id")
   userId     String    @map("user_id")
   companyId  String    @map("company_id")
@@ -80,7 +83,7 @@ model Schedule {
 }
 
 model OperatingDay {
-  id        String   @id @default(cuid())
+  id        String   @id @unique @default(cuid())
   companyId String   @map("company_id")
   branchId  String   @map("branch_id")
   weekDay   String   @map("week_day")
@@ -94,7 +97,7 @@ model OperatingDay {
 }
 
 model Service {
-  id        String     @id @default(cuid())
+  id        String     @id @unique @default(cuid())
   branchId  String     @map("branch_id")
   companyId String     @map("company_id")
   name      String
@@ -109,9 +112,12 @@ model Service {
   @@map("services")
 }
 
+// Indicar serviços que são que fazem parte de um pacote exemplo: temos corte de cabelo e barba, e temos um pacote de corte de cabelo e barba no mesmo serviço, temo que ter uma tabela que se o usuario escolher corte de cabelo a opção corte e barba fique desabilitada para escolha
+
 model Branch {
-  id            String         @id @default(cuid())
+  id            String         @id @unique @default(cuid())
   companyId     String         @map("company_id")
+  active        Boolean        @default(true)
   name          String
   phone         String
   zipCode       String?        @map("zip_code")
@@ -132,7 +138,7 @@ model Branch {
 }
 
 model DefaultMessage {
-  id        String   @id @default(cuid())
+  id        String   @id @unique @default(cuid())
   name      String
   content   String
   actions   String[]
@@ -143,7 +149,7 @@ model DefaultMessage {
 }
 
 model Message {
-  id             String          @id @default(cuid())
+  id             String          @id @unique @default(cuid())
   branchId       String          @map("branch_id")
   name           String
   content        String
@@ -158,7 +164,7 @@ model Message {
 }
 
 model MessageOption {
-  id        String   @id @default(cuid())
+  id        String   @id @unique @default(cuid())
   index     Int
   messageId String   @map("message_id")
   child     String?
@@ -169,3 +175,4 @@ model MessageOption {
 
   @@map("message_options")
 }
+
