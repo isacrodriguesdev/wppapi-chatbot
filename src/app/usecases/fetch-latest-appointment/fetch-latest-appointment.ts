@@ -14,6 +14,7 @@ export class FetchLatestAppointment {
     const appointments = await this.appointmentRepository.fetchByRangeDate(branchId, startDate, endDate);
     return appointments
       .filter((appointment) => appointment.status !== "canceled")
-      .sort((a, b) => a.date.getTime() - b.date.getTime());
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .sort((a, b) => (a.status === "done" ? 1 : 0) - (b.status === "done" ? 1 : 0));
   }
 }

@@ -8,6 +8,7 @@ export class UserMapper {
       email: user.email,
       phone: user.phone,
       avatar: user.avatar,
+      details: user.details && user.details.serialize(),
     };
   }
 }

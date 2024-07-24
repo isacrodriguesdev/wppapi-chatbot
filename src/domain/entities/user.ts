@@ -1,4 +1,5 @@
 import { BaseEntity } from "src/domain/entities/base-entity";
+import { IUserDetails, UserDetails } from "src/domain/entities/user-details";
 
 export interface IUser {
   id: string;
@@ -7,6 +8,7 @@ export interface IUser {
   avatar?: string;
   phone: string;
   companyId: string;
+  details: IUserDetails;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -19,6 +21,7 @@ export class User extends BaseEntity {
   private _companyId: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+  private _userDetails: UserDetails;
 
   constructor(user: Omit<IUser, "id">, id?: string) {
     super(id);
@@ -29,6 +32,7 @@ export class User extends BaseEntity {
     this._companyId = user.companyId;
     this._createdAt = user.createdAt ?? new Date();
     this._updatedAt = user.updatedAt ?? new Date();
+    this._userDetails = new UserDetails(user.details, user.details?.id);
   }
 
   get name(): string {
@@ -63,6 +67,10 @@ export class User extends BaseEntity {
     return this._updatedAt;
   }
 
+  get details(): UserDetails {
+    return this._userDetails;
+  }
+
   serialize(): IUser {
     return {
       id: this.id,
@@ -72,6 +80,7 @@ export class User extends BaseEntity {
       companyId: this._companyId,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
+      details: this._userDetails.serialize(),
     };
   }
 }

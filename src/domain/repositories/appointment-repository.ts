@@ -4,6 +4,7 @@ export abstract class AppointmentRepository {
   abstract findById(id: string, status?: IAppointment.Status): Promise<Appointment | null>;
   abstract fetchLatestFromUser(userId: string, status?: IAppointment.Status): Promise<Appointment[]>;
   abstract fetchLatest(branchId: string, status?: IAppointment.Status): Promise<Appointment[]>;
+  abstract getLatest(branchId: string, status?: IAppointment.Status): Promise<Appointment>;
   abstract fetchByRangeDate(
     branchId: string,
     startDate: Date,
