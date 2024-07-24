@@ -12,7 +12,7 @@ export class PrismaUserRepositoryMapper {
         companyId: user.companyId,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        details: user.userDetails ? PrismaUserDetailsRepositoryMapper.toDomain(user.userDetails[0]) : null,
+        details: user.details ? PrismaUserDetailsRepositoryMapper.toDomain(user.details[0]) : null,
       },
       user.id,
     );
@@ -29,7 +29,7 @@ export class PrismaUserRepositoryMapper {
       companyId: user.companyId,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-      userDetails: PrismaUserDetailsRepositoryMapper.toPersistence(user.details),
+      details: PrismaUserDetailsRepositoryMapper.toPersistence(user.details),
     };
   }
 }

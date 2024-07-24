@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "docker:build": "docker build -t isacrodriguesdev/wppapi:latest .",
-    "docker:publish": "docker push isacrodriguesdev/wppapi:latest",
+    "docker:build": "docker build -t workehub/wppapi:latest .",
+    "docker:publish": "docker push workehub/wppapi:latest",
     "docker:deploy": "npm run docker:build && npm run docker:publish",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
