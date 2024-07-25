@@ -8,9 +8,20 @@ import { PrismaService } from "src/shared/infra/database/prisma/prisma.service";
 export class PrismaAppointmentRepository implements AppointmentRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getLatest(branchId: string, status?: IAppointment.Status): Promise<Appointment> {
-    const appointment = await this.prisma.schedule.findFirst({
-      where: { branchId, status, date: { gte: new Date() } },
+  async getLatest(branchId: string, status?: IAppointment.Status): Promise<Appointment | null> {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+    const results = await this.prisma.schedule.findMany({
+      where: {
+        branchId,
+        status,
+        date: {
+          gte: startOfToday,
+          lte: startOfTomorrow,
+        },
+      },
       include: {
         user: {
           select: { id: true, name: true, phone: true, avatar: true, details: true },
@@ -19,7 +30,16 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         service: true,
       },
     });
-    return PrismaAppointmentRepositoryMapper.toDomain(appointment);
+
+    const upcomingAppointments = results
+      .filter((appointment) => new Date(appointment.date) > now)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    const latestAppointment = upcomingAppointments[0];
+
+    if (!latestAppointment) return null;
+
+    return PrismaAppointmentRepositoryMapper.toDomain(latestAppointment);
   }
 
   async fetchByRangeDate(
@@ -39,7 +59,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       },
       include: {
         user: {
-          select: { id: true, name: true, phone: true, details: true },
+          select: { id: true, name: true, phone: true, avatar: true, details: true },
         },
         branch: true,
         service: true,
@@ -55,7 +75,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         id: true,
         status: true,
         date: true,
-        user: { select: { id: true, name: true, phone: true, details: true } },
+        user: { select: { id: true, name: true, phone: true, avatar: true, details: true } },
         branch: { select: { id: true, name: true } },
         service: { select: { id: true, name: true, duration: true, price: true } },
       },
@@ -63,17 +83,20 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
     return appointments.map(PrismaAppointmentRepositoryMapper.toDomain);
   }
 
-  async findById(id: string, status?: IAppointment.Status): Promise<Appointment> {
+  async findById(id: string, status?: IAppointment.Status): Promise<Appointment | null> {
     const appointment = await this.prisma.schedule.findUnique({
       where: { id, status },
       include: {
         user: {
-          select: { id: true, name: true, phone: true, details: true },
+          select: { id: true, name: true, phone: true, avatar: true, details: true },
         },
         branch: true,
         service: true,
       },
     });
+
+    if (!appointment) return null;
+
     return PrismaAppointmentRepositoryMapper.toDomain(appointment);
   }
 

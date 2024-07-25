@@ -15,6 +15,7 @@ model Company {
   email     String?    @unique // new 
   password  String?
   active    Boolean    @default(true)
+  questions String[]
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
   users     User[]
