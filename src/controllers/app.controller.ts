@@ -4,6 +4,7 @@ import { FetchLatestAppointment } from "src/app/usecases/fetch-latest-appointmen
 import { GetAppointmentById } from "src/app/usecases/get-appointment-by-id/get-appointment-by-id";
 import { GetLatestAppointment } from "src/app/usecases/get-latest-appointment/get-latest-appointment";
 import { UpdateAppointment } from "src/app/usecases/update-appointment/update-appointment";
+import { UpdateEmployee } from "src/app/usecases/update-employee/update-employee";
 import { IAppointment } from "src/domain/entities/appointment";
 import { JwtGuard } from "src/shared/infra/auth/passport-jwt/jwt.guard";
 import { AppointmentMapper } from "src/shared/infra/mappers/appointment-mapper";
@@ -16,6 +17,7 @@ export class AppController {
     private readonly fetchAnalyticalData: FetchAnalyticalData,
     private readonly getAppointmentById: GetAppointmentById,
     private readonly getLatestAppointment: GetLatestAppointment,
+    private readonly updateEmployee: UpdateEmployee,
   ) {}
 
   @Get()
@@ -68,5 +70,11 @@ export class AppController {
     const user = request.user;
     const appointment = await this.getLatestAppointment.execute(user.branchId);
     return AppointmentMapper.toDTO(appointment);
+  }
+
+  @UseGuards(JwtGuard)
+  @Put("employees")
+  async _updateEmployee(@Body() body: any): Promise<void> {
+    await this.updateEmployee.execute(body);
   }
 }

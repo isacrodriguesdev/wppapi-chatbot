@@ -20,4 +20,15 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
 
     return PrismaEmployeeRepositoryMapper.toDomain(employee);
   }
+
+  async update(employee: Partial<Employee>): Promise<void> {
+    await this.prismaService.employee.update({
+      where: { id: employee.id },
+      data: {
+        name: employee.name,
+        email: employee.email,
+        phone: employee.phone,
+      },
+    });
+  }
 }

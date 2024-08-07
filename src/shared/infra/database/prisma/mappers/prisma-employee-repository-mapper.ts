@@ -12,6 +12,7 @@ export class PrismaEmployeeRepositoryMapper {
         password: employee.password,
         companyId: employee.companyId,
         branchId: employee.branchId,
+        androidDeviceToken: employee.androidDeviceToken,
         createdAt: employee.createdAt,
         updatedAt: employee.updatedAt,
         branch: PrismaBranchRepositoryMapper.toDomain(employee.branch),

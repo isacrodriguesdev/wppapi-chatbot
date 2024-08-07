@@ -12,7 +12,7 @@ model Company {
   id        String     @id @unique @default(cuid())
   name      String
   phone     String
-  email     String?    @unique // new 
+  email     String?    @unique
   password  String?
   active    Boolean    @default(true)
   questions String[]
@@ -28,19 +28,95 @@ model Company {
 }
 
 model User {
-  id          String       @id @unique @default(cuid())
-  name        String
-  phone       String
-  avatar      String?
-  companyId   String
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
-  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  schedules   Schedule[]
-  details UserDetail[]
+  id                    String                  @id @unique @default(cuid())
+  name                  String
+  phone                 String
+  avatar                String?
+  active                Boolean                 @default(true)
+  companyId             String
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  company               Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules             Schedule[]
+  details               UserDetail[]
+  UserAttendmentMessage UserAttendmentMessage[]
+  UserAttendment        UserAttendment[]
 
   @@index([companyId])
   @@map("users")
+}
+
+model Department {
+  id                String             @id @default(cuid())
+  name              String
+  description       String?
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  branchDepartments BranchDepartment[]
+  userAttendments   UserAttendment[]
+
+  @@map("departments")
+}
+
+model UserAttendment {
+  id           String   @id @default(cuid()) // pode ser usado como canal do socket
+  userId       String   @map("user_id")
+  departmentId String   @map("department_id")
+  branchId     String   @map("branch_id")
+  employeeId   String?  @map("employee_id") // Relacionado ao operador que pegou o atendimento
+  status       String   @default("open") // open, assigned, closed, done, unresolved, resolved, canceled
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user                   User                    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  department             Department              @relation(fields: [departmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  branch                 Branch                  @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  employee               Employee?               @relation(fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userAttendmentMessages UserAttendmentMessage[]
+
+  @@map("user_attendments")
+}
+
+model UserAttendmentMessage {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  attendmentId String   @map("attendment_id")
+  type         String // text, image, video, audio, file
+  content      String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  attendment UserAttendment @relation(fields: [attendmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("user_attendment_messages")
+}
+
+model BranchDepartment {
+  id           String   @id @default(cuid())
+  branchId     String   @map("branch_id")
+  departmentId String   @map("department_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  department          Department           @relation(fields: [departmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  employeeDepartments EmployeeDepartment[]
+
+  @@map("branch_departments")
+}
+
+model EmployeeDepartment {
+  id           String   @id @default(cuid())
+  departmentId String   @map("department_id")
+  employeeId   String   @map("employee_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  employee   Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  department BranchDepartment @relation(fields: [departmentId], references: [id])
+
+  @@map("employee_departments")
 }
 
 model UserDetail {
@@ -65,23 +141,24 @@ model UserDetail {
 }
 
 model Employee {
-  id        String     @id @unique @default(cuid())
-  name      String
-  phone     String
-  avatar    String?
-  email     String?    @unique
-  password  String?
-  // description      String?
-  // shortDescription String?
-  active    Boolean    @default(true)
-  roles     String[]   @default(["employee"])
-  companyId String     @map("company_id")
-  branchId  String     @map("branch_id")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  branch    Branch     @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  schedules Schedule[]
+  id             String               @id @unique @default(cuid())
+  name           String
+  phone          String
+  avatar         String?
+  email          String?              @unique
+  password       String?
+  deviceId       String?              @map("device_id")
+  active         Boolean              @default(true)
+  roles          String[]             @default(["employee"])
+  companyId      String               @map("company_id")
+  branchId       String               @map("branch_id")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+  company        Company              @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  branch         Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules      Schedule[]
+  departments    EmployeeDepartment[]
+  UserAttendment UserAttendment[]
 
   @@map("employees")
 }
@@ -139,24 +216,26 @@ model Service {
 // Indicar serviços que são que fazem parte de um pacote exemplo: temos corte de cabelo e barba, e temos um pacote de corte de cabelo e barba no mesmo serviço, temo que ter uma tabela que se o usuario escolher corte de cabelo a opção corte e barba fique desabilitada para escolha
 
 model Branch {
-  id            String         @id @unique @default(cuid())
-  companyId     String         @map("company_id")
-  active        Boolean        @default(true)
-  name          String
-  phone         String
-  zipCode       String?        @map("zip_code")
-  complement    String?        @map("complement")
-  state         String?        @map("state")
-  city          String?        @map("city")
-  geoLocation   String[]       @map("geo_location")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
-  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  schedules     Schedule[]
-  operatingDays OperatingDay[]
-  services      Service[]
-  employees     Employee[]
-  messages      Message[]
+  id                String             @id @unique @default(cuid())
+  companyId         String             @map("company_id")
+  active            Boolean            @default(true)
+  name              String
+  phone             String
+  zipCode           String?            @map("zip_code")
+  complement        String?            @map("complement")
+  state             String?            @map("state")
+  city              String?            @map("city")
+  geoLocation       String[]           @map("geo_location")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  company           Company            @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules         Schedule[]
+  operatingDays     OperatingDay[]
+  services          Service[]
+  employees         Employee[]
+  messages          Message[]
+  branchDepartments BranchDepartment[]
+  userAttendments   UserAttendment[]
 
   @@map("branches")
 }

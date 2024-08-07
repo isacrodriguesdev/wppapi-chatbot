@@ -5,6 +5,7 @@ import { GetAppointmentById } from "src/app/usecases/get-appointment-by-id/get-a
 import { GetLatestAppointment } from "src/app/usecases/get-latest-appointment/get-latest-appointment";
 import { LoginAccount } from "src/app/usecases/login-account/login-account";
 import { UpdateAppointment } from "src/app/usecases/update-appointment/update-appointment";
+import { UpdateEmployee } from "src/app/usecases/update-employee/update-employee";
 import { AccountController } from "src/controllers/account.controller";
 import { AppController } from "src/controllers/app.controller";
 import { AuthModule } from "src/shared/infra/auth/auth.module";
@@ -21,6 +22,7 @@ import { EncryptionModule } from "src/shared/infra/encryption/encryption.module"
     FetchAnalyticalData,
     GetAppointmentById,
     GetLatestAppointment,
+    UpdateEmployee,
   ],
   exports: [],
 })

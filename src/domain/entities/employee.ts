@@ -10,6 +10,7 @@ export interface IEmployee {
   password?: string;
   companyId: string;
   branchId: string;
+  androidDeviceToken: string;
   createdAt?: Date;
   updatedAt?: Date;
   branch?: Branch;
@@ -23,6 +24,7 @@ export class Employee extends BaseEntity {
   private _password?: string;
   private _companyId: string;
   private _branchId: string;
+  private _androidDeviceToken: string;
   private _createdAt: Date;
   private _updatedAt: Date;
   private _branch?: Branch;
@@ -36,6 +38,7 @@ export class Employee extends BaseEntity {
     this._password = props.password;
     this._companyId = props.companyId;
     this._branchId = props.branchId;
+    this._androidDeviceToken = props.androidDeviceToken;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
     this._branch = props.branch;
@@ -81,6 +84,10 @@ export class Employee extends BaseEntity {
     return this._branch;
   }
 
+  get androidDeviceToken(): string {
+    return this._androidDeviceToken;
+  }
+
   serialize(): IEmployee {
     return {
       id: this.id,
@@ -91,6 +98,7 @@ export class Employee extends BaseEntity {
       password: this.password,
       companyId: this.companyId,
       branchId: this.branchId,
+      androidDeviceToken: this.androidDeviceToken,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
