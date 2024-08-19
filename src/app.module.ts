@@ -11,9 +11,10 @@ import { AppController } from "src/controllers/app.controller";
 import { AuthModule } from "src/shared/infra/auth/auth.module";
 import { DatabaseModule } from "src/shared/infra/database/database.module";
 import { EncryptionModule } from "src/shared/infra/encryption/encryption.module";
+import { ServiceModule } from "src/shared/services/service.module";
 
 @Module({
-  imports: [DatabaseModule, AuthModule, EncryptionModule],
+  imports: [DatabaseModule, AuthModule, EncryptionModule, ServiceModule],
   controllers: [AppController, AccountController],
   providers: [
     LoginAccount,

@@ -24,7 +24,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       },
       include: {
         user: {
-          select: { id: true, name: true, phone: true, avatar: true, details: true },
+          select: { id: true, name: true, phone: true, avatar: true, profiles: true },
         },
         branch: true,
         service: true,
@@ -59,7 +59,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       },
       include: {
         user: {
-          select: { id: true, name: true, phone: true, avatar: true, details: true },
+          select: { id: true, name: true, phone: true, avatar: true, profiles: true },
         },
         branch: true,
         service: true,
@@ -75,7 +75,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
         id: true,
         status: true,
         date: true,
-        user: { select: { id: true, name: true, phone: true, avatar: true, details: true } },
+        user: { select: { id: true, name: true, phone: true, avatar: true, profiles: true } },
         branch: { select: { id: true, name: true } },
         service: { select: { id: true, name: true, duration: true, price: true } },
       },
@@ -88,7 +88,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       where: { id, status },
       include: {
         user: {
-          select: { id: true, name: true, phone: true, avatar: true, details: true },
+          select: { id: true, name: true, phone: true, avatar: true, profiles: true },
         },
         branch: true,
         service: true,
@@ -109,7 +109,7 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
       },
       include: {
         user: {
-          include: { details: true },
+          include: { profiles: true },
         },
         branch: true,
         service: true,

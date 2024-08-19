@@ -50,7 +50,6 @@ export class AppController {
   @Get("analytical-data")
   async _fetchAnalyticalData(@Request() request: any): Promise<any> {
     const user = request.user;
-    console.log(user);
     return this.fetchAnalyticalData.execute(user.companyId, user.branchId);
   }
 
