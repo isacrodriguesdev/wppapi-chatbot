@@ -16,7 +16,7 @@ export class AppController {
   }
 
   @UseGuards(JwtGuard)
-  @Get("dashboard")
+  @Get("analytical-data")
   async _fetchAnalyticalData(@Request() request: any): Promise<any> {
     const user = request.user;
     return this.fetchAnalyticalData.execute(user.companyId, user.branchId);
