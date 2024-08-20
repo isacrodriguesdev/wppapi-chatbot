@@ -7,7 +7,7 @@ export abstract class BaseEntity {
     this._id = id ?? randomUUID();
   }
 
-  public get id(): string {
+  public get id() {
     return this._id;
   }
 }

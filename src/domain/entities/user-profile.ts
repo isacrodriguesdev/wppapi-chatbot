@@ -1,6 +1,6 @@
 import { BaseEntity } from "src/domain/entities/base-entity";
 
-export interface IUserDetails {
+export interface IUserProfile {
   id: string;
   userId: string;
   email?: string;
@@ -16,7 +16,7 @@ export interface IUserDetails {
   updatedAt?: Date;
 }
 
-export class UserDetails extends BaseEntity {
+export class UserProfile extends BaseEntity {
   private _userId: string;
   private _email?: string;
   private _cpf?: string;
@@ -30,20 +30,20 @@ export class UserDetails extends BaseEntity {
   private _createdAt?: Date;
   private _updatedAt?: Date;
 
-  constructor(details: Omit<IUserDetails, "id">, id?: string) {
+  constructor(userDetail: Omit<IUserProfile, "id">, id?: string) {
     super(id);
-    this._userId = details.userId;
-    this._email = details.email;
-    this._cpf = details.cpf;
-    this._complement = details.complement;
-    this._street = details.street;
-    this._neighborhood = details.neighborhood;
-    this._number = details.number;
-    this._zipCode = details.zipCode;
-    this._city = details.city;
-    this._state = details.state;
-    this._createdAt = details.createdAt ?? new Date();
-    this._updatedAt = details.updatedAt ?? new Date();
+    this._userId = userDetail.userId;
+    this._email = userDetail.email;
+    this._cpf = userDetail.cpf;
+    this._complement = userDetail.complement;
+    this._street = userDetail.street;
+    this._neighborhood = userDetail.neighborhood;
+    this._number = userDetail.number;
+    this._zipCode = userDetail.zipCode;
+    this._city = userDetail.city;
+    this._state = userDetail.state;
+    this._createdAt = userDetail.createdAt ?? new Date();
+    this._updatedAt = userDetail.updatedAt ?? new Date();
   }
 
   get userId() {
@@ -100,23 +100,5 @@ export class UserDetails extends BaseEntity {
 
   get updatedAt() {
     return this._updatedAt;
-  }
-
-  serialize(): IUserDetails {
-    return {
-      id: this.id,
-      userId: this._userId,
-      email: this._email,
-      cpf: this._cpf,
-      complement: this._complement,
-      street: this._street,
-      neighborhood: this._neighborhood,
-      number: this._number,
-      zipCode: this._zipCode,
-      city: this._city,
-      state: this._state,
-      createdAt: this._createdAt,
-      updatedAt: this._updatedAt,
-    };
   }
 }

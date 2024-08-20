@@ -33,6 +33,10 @@ export class Service extends BaseEntity {
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
     this._branch = props.branch;
+
+    if (!this._price) {
+      this._price = parseFloat(this._price.toFixed(2));
+    }
   }
 
   get companyId() {

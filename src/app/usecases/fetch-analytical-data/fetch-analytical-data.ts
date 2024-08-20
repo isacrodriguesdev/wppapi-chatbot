@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { AppointmentRepository } from "src/domain/repositories/appointment-repository";
+import { ScheduleRepository } from "src/domain/repositories/schedule-repository";
 import { UserRepository } from "src/domain/repositories/user-repository";
 
 @Injectable()
 export class FetchAnalyticalData {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly appointmentRepository: AppointmentRepository,
+    private readonly scheduleRepository: ScheduleRepository,
   ) {}
 
   async execute(companyId: string, branchId: string): Promise<any> {
@@ -16,29 +16,29 @@ export class FetchAnalyticalData {
     endDate.setMonth(endDate.getMonth() + 1);
 
     const users = await this.userRepository.fetchByCompanyId(companyId);
-    const appointments = await this.appointmentRepository.fetchByRangeDate(branchId, startDate, endDate);
+    const schedules = await this.scheduleRepository.fetchByDate(branchId, startDate, endDate);
 
     const totalUsers = users.length;
 
-    const totalScheduled = appointments.filter((appointment) => appointment.status === "scheduled").length;
-    const totalCanceled = appointments.filter((appointment) => appointment.status === "canceled").length;
-    const totalCompleted = appointments.filter((appointment) => appointment.status === "done").length;
+    const totalScheduled = schedules.filter((schedule) => schedule.status === "scheduled").length;
+    const totalCanceled = schedules.filter((schedule) => schedule.status === "canceled").length;
+    const totalCompleted = schedules.filter((schedule) => schedule.status === "done").length;
 
-    const totalRevenue = appointments
-      .filter((appointment) => appointment.status === "done")
-      .reduce((total, appointment) => total + appointment.service.price, 0);
+    const totalRevenue = schedules
+      .filter((schedule) => schedule.status === "done")
+      .reduce((total, schedule) => total + schedule.service.price, 0);
 
     const userSummary = {
       total: totalUsers,
     };
 
-    const filteredAppontments = appointments.filter((appointment, index, self) => {
-      return self.findIndex((t) => t.user.id === appointment.user.id) === index;
+    const filteredAppontments = schedules.filter((schedule, index, self) => {
+      return self.findIndex((t) => t.user.id === schedule.user.id) === index;
     });
 
     const conversionRate = (filteredAppontments.length / totalUsers) * 100;
 
-    const appointmentSummary = {
+    const scheduleSummary = {
       totalScheduled,
       totalCanceled,
       totalCompleted,
@@ -51,7 +51,7 @@ export class FetchAnalyticalData {
 
     return {
       userSummary,
-      appointmentSummary,
+      scheduleSummary,
       financialSummary,
     };
   }

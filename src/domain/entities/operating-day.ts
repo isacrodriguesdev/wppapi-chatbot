@@ -3,7 +3,6 @@ import { BaseEntity } from "src/domain/entities/base-entity";
 export interface IOperatingDay {
   id: string;
   branchId: string;
-  companyId: string;
   weekDay: string;
   startTime: string;
   endTime: string;
@@ -13,7 +12,6 @@ export interface IOperatingDay {
 
 export class OperatingDay extends BaseEntity {
   private _branchId: string;
-  private _companyId: string;
   private _weekDay: string;
   private _startTime: string;
   private _endTime: string;
@@ -23,7 +21,6 @@ export class OperatingDay extends BaseEntity {
   constructor(props: Omit<IOperatingDay, "id">, id?: string) {
     super(id);
     this._branchId = props.branchId;
-    this._companyId = props.companyId;
     this._weekDay = props.weekDay;
     this._startTime = props.startTime;
     this._endTime = props.endTime;
@@ -33,10 +30,6 @@ export class OperatingDay extends BaseEntity {
 
   get branchId(): string {
     return this._branchId;
-  }
-
-  get companyId(): string {
-    return this._companyId;
   }
 
   get weekDay(): string {
@@ -63,7 +56,6 @@ export class OperatingDay extends BaseEntity {
     return {
       id: this.id,
       branchId: this._branchId,
-      companyId: this._companyId,
       weekDay: this._weekDay,
       startTime: this._startTime,
       endTime: this._endTime,

@@ -1,7 +1,9 @@
 import { BaseEntity } from "src/domain/entities/base-entity";
 import { Company } from "src/domain/entities/company";
 import { Employee } from "src/domain/entities/employee";
+import { Message } from "src/domain/entities/message";
 import { OperatingDay } from "src/domain/entities/operating-day";
+import { Schedule } from "src/domain/entities/schedule";
 import { Service } from "src/domain/entities/service";
 
 export interface IBranch {
@@ -17,9 +19,11 @@ export interface IBranch {
   createdAt?: Date;
   updatedAt?: Date;
   company?: Company;
+  schedules?: Schedule[];
   operatingDays?: OperatingDay[];
   services?: Service[];
   employees?: Employee[];
+  messages?: Message[];
 }
 
 export class Branch extends BaseEntity {
@@ -34,9 +38,11 @@ export class Branch extends BaseEntity {
   private _createdAt: Date;
   private _updatedAt: Date;
   private _company?: Company;
+  private _schedules: Schedule[];
   private _operatingDays: OperatingDay[];
   private _services: Service[];
   private _employees: Employee[];
+  private _messages: Message[];
 
   constructor(props: Omit<IBranch, "id">, id?: string) {
     super(id);
@@ -51,9 +57,11 @@ export class Branch extends BaseEntity {
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
     this._company = props.company;
+    this._schedules = props.schedules ?? [];
     this._operatingDays = props.operatingDays ?? [];
     this._services = props.services ?? [];
     this._employees = props.employees ?? [];
+    this._messages = props.messages ?? [];
   }
 
   get companyId(): string {
@@ -100,6 +108,10 @@ export class Branch extends BaseEntity {
     return this._company;
   }
 
+  get schedules(): Schedule[] {
+    return this._schedules;
+  }
+
   get operatingDays(): OperatingDay[] {
     return this._operatingDays;
   }
@@ -110,6 +122,10 @@ export class Branch extends BaseEntity {
 
   get employees(): Employee[] {
     return this._employees;
+  }
+
+  get messages(): Message[] {
+    return this._messages;
   }
 
   serialize(): IBranch {
@@ -126,9 +142,15 @@ export class Branch extends BaseEntity {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       company: this.company,
+      schedules: this.schedules,
       operatingDays: this.operatingDays,
       services: this.services,
       employees: this.employees,
+      messages: this.messages,
     };
+  }
+
+  static deserialize(data: IBranch): Branch {
+    return new Branch(data);
   }
 }

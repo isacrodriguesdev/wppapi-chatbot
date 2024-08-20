@@ -1,32 +1,25 @@
-import { Injectable } from "@nestjs/common";
-import { Employee } from "src/domain/entities/employee";
 import { EmployeeRepository } from "src/domain/repositories/employee-repository";
+import { Employee, IEmployee } from "src/domain/entities/employee";
 import { PrismaEmployeeRepositoryMapper } from "src/shared/infra/database/prisma/mappers/prisma-employee-repository-mapper";
 import { PrismaService } from "src/shared/infra/database/prisma/prisma.service";
 
-@Injectable()
 export class PrismaEmployeeRepository implements EmployeeRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findByEmail(email: string): Promise<Employee | null> {
-    const employee = await this.prismaService.employee.findFirst({
+    const employee = await this.prisma.employee.findUnique({
       where: { email },
-      include: { branch: true },
     });
-
-    if (!employee) {
-      return null;
-    }
 
     return PrismaEmployeeRepositoryMapper.toDomain(employee);
   }
 
-  async update(employee: Partial<Employee>): Promise<void> {
-    await this.prismaService.employee.update({
-      where: { id: employee.id },
+  async update(id: string, employee: Partial<Omit<IEmployee, "id" | "createdAt">>): Promise<void> {
+    await this.prisma.employee.update({
+      where: { id },
       data: {
-        name: employee.name,
         email: employee.email,
+        password: employee.password,
         phone: employee.phone,
       },
     });

@@ -1,5 +1,6 @@
 import { BaseEntity } from "src/domain/entities/base-entity";
 import { Branch } from "src/domain/entities/branch";
+import { Company } from "src/domain/entities/company";
 
 export interface IEmployee {
   id?: string;
@@ -8,11 +9,11 @@ export interface IEmployee {
   avatar?: string;
   email?: string;
   password?: string;
-  companyId: string;
   branchId: string;
-  androidDeviceToken: string;
+  deviceId?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  company?: Company;
   branch?: Branch;
 }
 
@@ -22,11 +23,11 @@ export class Employee extends BaseEntity {
   private _avatar?: string;
   private _email?: string;
   private _password?: string;
-  private _companyId: string;
   private _branchId: string;
-  private _androidDeviceToken: string;
+  private _deviceId?: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+  private _company?: Company;
   private _branch?: Branch;
 
   constructor(props: IEmployee, id?: string) {
@@ -36,11 +37,11 @@ export class Employee extends BaseEntity {
     this._avatar = props.avatar;
     this._email = props.email;
     this._password = props.password;
-    this._companyId = props.companyId;
     this._branchId = props.branchId;
-    this._androidDeviceToken = props.androidDeviceToken;
+    this._deviceId = props.deviceId;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
+    this._company = props.company;
     this._branch = props.branch;
   }
 
@@ -64,10 +65,6 @@ export class Employee extends BaseEntity {
     return this._password;
   }
 
-  get companyId(): string {
-    return this._companyId;
-  }
-
   get branchId(): string {
     return this._branchId;
   }
@@ -80,12 +77,16 @@ export class Employee extends BaseEntity {
     return this._updatedAt;
   }
 
+  get company(): Company | undefined {
+    return this._company;
+  }
+
   get branch(): Branch | undefined {
     return this._branch;
   }
 
-  get androidDeviceToken(): string {
-    return this._androidDeviceToken;
+  get deviceId(): string | undefined {
+    return this._deviceId;
   }
 
   serialize(): IEmployee {
@@ -96,11 +97,11 @@ export class Employee extends BaseEntity {
       avatar: this.avatar,
       email: this.email,
       password: this.password,
-      companyId: this.companyId,
       branchId: this.branchId,
-      androidDeviceToken: this.androidDeviceToken,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      company: this.company,
+      branch: this.branch,
     };
   }
 }

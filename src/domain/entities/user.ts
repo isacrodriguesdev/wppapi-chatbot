@@ -1,49 +1,45 @@
+import { UserProfile } from "src/domain/entities/user-profile";
 import { BaseEntity } from "src/domain/entities/base-entity";
-import { IUserDetails, UserDetails } from "src/domain/entities/user-details";
 
 export interface IUser {
   id: string;
   name: string;
-  email?: string;
   avatar?: string;
   phone: string;
   companyId: string;
-  details: IUserDetails;
+  profile?: UserProfile;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export class User extends BaseEntity {
   private _name: string;
-  private _email?: string;
   private _avatar?: string;
   private _phone: string;
   private _companyId: string;
+  private _userProfile: UserProfile;
   private _createdAt: Date;
   private _updatedAt: Date;
-  private _userDetails: UserDetails;
 
   constructor(user: Omit<IUser, "id">, id?: string) {
     super(id);
-    this._name = user.name;
-    this._email = user.email;
+    this._name = user.name
+      .toLowerCase()
+      .replace(/\b\w/g, (l) => l.toUpperCase())
+      .trim();
     this._avatar = user.avatar;
     this._phone = user.phone;
     this._companyId = user.companyId;
+    this._userProfile = user.profile ?? new UserProfile({ userId: this.id });
     this._createdAt = user.createdAt ?? new Date();
     this._updatedAt = user.updatedAt ?? new Date();
-    this._userDetails = new UserDetails(user.details, user.details?.id);
   }
 
-  get name(): string {
+  get name() {
     return this._name;
   }
 
-  get email(): string | undefined {
-    return this._email;
-  }
-
-  get avatar(): string | undefined {
+  get avatar() {
     return this._avatar;
   }
 
@@ -51,36 +47,34 @@ export class User extends BaseEntity {
     this._avatar = avatar;
   }
 
-  get phone(): string {
+  get phone() {
     return this._phone;
   }
 
-  get companyId(): string {
+  get companyId() {
     return this._companyId;
   }
 
-  get createdAt(): Date {
+  get profile() {
+    return this._userProfile;
+  }
+
+  get createdAt() {
     return this._createdAt;
   }
 
-  get updatedAt(): Date {
+  get updatedAt() {
     return this._updatedAt;
   }
 
-  get details(): UserDetails {
-    return this._userDetails;
-  }
-
-  serialize(): IUser {
+  serialize() {
     return {
       id: this.id,
       name: this._name,
-      email: this._email,
       phone: this._phone,
       companyId: this._companyId,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
-      details: this._userDetails.serialize(),
     };
   }
 }

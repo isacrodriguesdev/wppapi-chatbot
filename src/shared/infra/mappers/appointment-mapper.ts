@@ -1,22 +1,22 @@
-import { Appointment, IAppointment } from "src/domain/entities/appointment";
+import { Schedule, ISchedule } from "src/domain/entities/schedule";
 import { IService } from "src/domain/entities/service";
 import { IUser } from "src/domain/entities/user";
 import { ServiceMapper } from "src/shared/infra/mappers/service-mapper";
 import { UserMapper } from "src/shared/infra/mappers/user-mapper";
 
-export class AppointmentMapper {
-  static toDTO(appointment: Appointment): Partial<IAppointment> {
+export class ScheduleMapper {
+  static toDTO(schedule: Schedule): Partial<ISchedule> {
     return {
-      id: appointment.id,
-      status: appointment.status,
-      userId: appointment.userId,
-      companyId: appointment.companyId,
-      serviceId: appointment.serviceId,
-      branchId: appointment.branchId,
-      date: appointment.date,
-      service: ServiceMapper.toDTO(appointment.service) as IService,
-      user: UserMapper.toDTO(appointment.user) as IUser,
-      // branch: appointment.branch,
+      id: schedule.id,
+      status: schedule.status,
+      userId: schedule.userId,
+      companyId: schedule.companyId,
+      serviceId: schedule.serviceId,
+      branchId: schedule.branchId,
+      date: schedule.date,
+      service: ServiceMapper.toDTO(schedule.service) as IService,
+      user: UserMapper.toDTO(schedule.user) as IUser,
+      // branch: schedule.branch,
     };
   }
 }

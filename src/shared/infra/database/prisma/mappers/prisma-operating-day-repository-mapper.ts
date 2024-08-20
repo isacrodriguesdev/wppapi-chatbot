@@ -4,7 +4,6 @@ export class PrismaOperatingDayRepositoryMapper {
   static toDomain(operatingDay: any): OperatingDay {
     return new OperatingDay(
       {
-        companyId: operatingDay.companyId,
         branchId: operatingDay.branchId,
         weekDay: operatingDay.weekDay,
         startTime: operatingDay.startTime,

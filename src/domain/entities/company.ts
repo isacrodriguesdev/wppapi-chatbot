@@ -1,8 +1,9 @@
 import { BaseEntity } from "src/domain/entities/base-entity";
+import { Schedule } from "src/domain/entities/schedule";
 import { Service } from "src/domain/entities/service";
 import { Branch } from "src/domain/entities/branch";
+import { OperatingDay } from "src/domain/entities/operating-day";
 import { Employee } from "src/domain/entities/employee";
-import { Appointment } from "src/domain/entities/appointment";
 
 export interface ICompany {
   id?: string;
@@ -10,10 +11,12 @@ export interface ICompany {
   phone: string;
   email?: string;
   password?: string;
+  questions: string[];
   createdAt?: Date;
   updatedAt?: Date;
   employees?: Employee[];
-  appointments?: Appointment[];
+  schedules?: Schedule[];
+  operatingDays?: OperatingDay[];
   services?: Service[];
   branchs?: Branch[];
 }
@@ -23,10 +26,12 @@ export class Company extends BaseEntity {
   private _phone: string;
   private _email?: string;
   private _password?: string;
+  private _questions: string[];
   private _createdAt: Date;
   private _updatedAt: Date;
   private _employees: Employee[];
-  private _appointments: Appointment[];
+  private _schedules: Schedule[];
+  private _operatingDays: OperatingDay[];
   private _services: Service[];
   private _branchs: Branch[];
 
@@ -36,16 +41,22 @@ export class Company extends BaseEntity {
     this._phone = props.phone;
     this._email = props.email;
     this._password = props.password;
+    this._questions = props.questions;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
     this._employees = props.employees ?? [];
-    this._appointments = props.appointments ?? [];
+    this._schedules = props.schedules ?? [];
+    this._operatingDays = props.operatingDays ?? [];
     this._services = props.services ?? [];
     this._branchs = props.branchs ?? [];
   }
 
   get name(): string {
     return this._name;
+  }
+
+  get slug(): string {
+    return this._name.replace(/ /g, "_").toLowerCase();
   }
 
   get phone(): string {
@@ -60,6 +71,10 @@ export class Company extends BaseEntity {
     return this._password;
   }
 
+  get questions(): string[] {
+    return this._questions;
+  }
+
   get createdAt(): Date {
     return this._createdAt;
   }
@@ -72,8 +87,12 @@ export class Company extends BaseEntity {
     return this._employees;
   }
 
-  get appointments(): Appointment[] {
-    return this._appointments;
+  get schedules(): Schedule[] {
+    return this._schedules;
+  }
+
+  get operatingDays(): OperatingDay[] {
+    return this._operatingDays;
   }
 
   get services(): Service[] {
@@ -91,10 +110,12 @@ export class Company extends BaseEntity {
       phone: this.phone,
       email: this.email,
       password: this.password,
+      questions: this.questions,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       employees: this.employees,
-      appointments: this.appointments,
+      schedules: this.schedules,
+      operatingDays: this.operatingDays,
       services: this.services,
       branchs: this.branchs,
     };

@@ -9,6 +9,7 @@ export class PrismaCompanyRepositoryMapper {
         phone: company.phone,
         email: company.email,
         password: company.password,
+        questions: company.questions,
         createdAt: company.createdAt,
         updatedAt: company.updatedAt,
         branchs: company.branchs.map(PrismaBranchRepositoryMapper.toDomain),
