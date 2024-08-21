@@ -25,6 +25,6 @@ export class AppController {
   @UseGuards(JwtGuard)
   @Put("employees")
   async _updateEmployee(@Body() body: any): Promise<void> {
-    await this.updateEmployee.execute(body);
+    await this.updateEmployee.execute(body.id, body);
   }
 }

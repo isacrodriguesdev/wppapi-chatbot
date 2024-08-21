@@ -1,10 +1,12 @@
 import { OperatingDay } from "src/domain/entities/operating-day";
 import { OperatingDayRepository } from "src/domain/repositories/operating-day-repository";
-import { prisma } from "src/shared/infra/database/prisma/prisma-service";
+import { PrismaService } from "src/shared/infra/database/prisma/prisma.service";
 
-export class PrismaOperatingDayRepository extends OperatingDayRepository {
+export class PrismaOperatingDayRepository implements OperatingDayRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
   async findAll(branchId: string): Promise<OperatingDay[]> {
-    const operatingDay = await prisma.branchOperatingDay.findMany({
+    const operatingDay = await this.prisma.branchOperatingDay.findMany({
       where: {
         branchId,
       },
@@ -13,12 +15,12 @@ export class PrismaOperatingDayRepository extends OperatingDayRepository {
     if (!operatingDay) {
       return null;
     }
-    
+
     return operatingDay.map((period) => new OperatingDay(period));
   }
 
   async findByWeekDay(branchId: string, weekDay: string): Promise<OperatingDay> {
-    const operatingDay = await prisma.branchOperatingDay.findFirst({
+    const operatingDay = await this.prisma.branchOperatingDay.findFirst({
       where: {
         branchId,
         weekDay: weekDay.toLowerCase(),

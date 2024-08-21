@@ -1,11 +1,13 @@
 import { Schedule, ISchedule, ScheduleStatus } from "src/domain/entities/schedule";
 import { ScheduleRepository } from "src/domain/repositories/schedule-repository";
 import { PrismaScheduleRepositoryMapper } from "src/shared/infra/database/prisma/mappers/prisma-schedule-repository-mapper";
-import { prisma } from "src/shared/infra/database/prisma/prisma-service";
+import { PrismaService } from "src/shared/infra/database/prisma/prisma.service";
 
 export class PrismaScheduleRepository implements ScheduleRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
   async fetchLatest(branchId: string, status?: ScheduleStatus): Promise<Schedule[]> {
-    const schedules = await prisma.schedule.findMany({
+    const schedules = await this.prisma.schedule.findMany({
       where: { branchId, status, date: { gte: new Date() } },
       include: { service: true, user: true, branch: true },
     });
@@ -14,7 +16,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
   }
 
   async fetchLatestFromUser(userId: string, status?: ScheduleStatus): Promise<Schedule[]> {
-    const schedules = await prisma.schedule.findMany({
+    const schedules = await this.prisma.schedule.findMany({
       where: { userId, status, date: { gte: new Date() } },
       include: { service: true, user: true, branch: true },
     });
@@ -23,7 +25,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
   }
 
   async findByDate(branchId: string, date: Date, status?: ScheduleStatus): Promise<Schedule | null> {
-    const schedule = await prisma.schedule.findFirst({
+    const schedule = await this.prisma.schedule.findFirst({
       where: { branchId, date, status },
       include: { service: true, user: true, branch: true },
     });
@@ -34,7 +36,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
   }
 
   async findById(id: string, status?: ScheduleStatus): Promise<Schedule | null> {
-    const schedule = await prisma.schedule.findUnique({
+    const schedule = await this.prisma.schedule.findUnique({
       where: { id, status },
       include: { service: true, user: true, branch: true },
     });
@@ -49,7 +51,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
     dateEnd: Date,
     status: ScheduleStatus = ScheduleStatus.SCHEDULED,
   ): Promise<Schedule[]> {
-    const schedules = await prisma.schedule.findMany({
+    const schedules = await this.prisma.schedule.findMany({
       where: {
         branchId,
         status,
@@ -65,7 +67,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
   }
 
   async fetchByUserId(userId: string, status?: ScheduleStatus): Promise<Schedule[]> {
-    const schedules = await prisma.schedule.findMany({
+    const schedules = await this.prisma.schedule.findMany({
       where: { userId, status },
       include: { service: true, user: true, branch: true },
     });
@@ -74,7 +76,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
   }
 
   async findAll(branchId: string, status?: ScheduleStatus): Promise<Schedule[]> {
-    const schedules = await prisma.schedule.findMany({
+    const schedules = await this.prisma.schedule.findMany({
       where: { branchId, status },
       include: { service: true, user: true, branch: true },
     });
@@ -83,7 +85,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
   }
 
   async create(schedule: Schedule): Promise<void> {
-    await prisma.schedule.create({
+    await this.prisma.schedule.create({
       data: {
         id: schedule.id,
         status: schedule.status,
@@ -98,7 +100,7 @@ export class PrismaScheduleRepository implements ScheduleRepository {
   }
 
   async update(id: string, schedule: Partial<ISchedule>): Promise<void> {
-    await prisma.schedule.update({
+    await this.prisma.schedule.update({
       where: { id },
       data: {
         status: schedule.status,

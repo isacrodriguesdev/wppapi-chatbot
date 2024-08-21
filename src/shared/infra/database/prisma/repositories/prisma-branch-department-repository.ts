@@ -1,10 +1,12 @@
 import { Department } from "src/domain/entities/department";
 import { BranchDepartmentRepository } from "src/domain/repositories/branch-department-repository";
-import { prisma } from "src/shared/infra/database/prisma/prisma-service";
+import { PrismaService } from "src/shared/infra/database/prisma/prisma.service";
 
-export class PrismaBranchDepartmentRepository extends BranchDepartmentRepository {
+export class PrismaBranchDepartmentRepository implements BranchDepartmentRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
   async fetch(branchId: string): Promise<Department[]> {
-    const departments = await prisma.departmentBranch.findMany({
+    const departments = await this.prisma.departmentBranch.findMany({
       where: { branchId },
       select: {
         department: {

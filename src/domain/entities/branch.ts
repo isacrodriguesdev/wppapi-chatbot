@@ -1,7 +1,6 @@
 import { BaseEntity } from "src/domain/entities/base-entity";
 import { Company } from "src/domain/entities/company";
 import { Employee } from "src/domain/entities/employee";
-import { Message } from "src/domain/entities/message";
 import { OperatingDay } from "src/domain/entities/operating-day";
 import { Schedule } from "src/domain/entities/schedule";
 import { Service } from "src/domain/entities/service";
@@ -23,7 +22,6 @@ export interface IBranch {
   operatingDays?: OperatingDay[];
   services?: Service[];
   employees?: Employee[];
-  messages?: Message[];
 }
 
 export class Branch extends BaseEntity {
@@ -42,7 +40,6 @@ export class Branch extends BaseEntity {
   private _operatingDays: OperatingDay[];
   private _services: Service[];
   private _employees: Employee[];
-  private _messages: Message[];
 
   constructor(props: Omit<IBranch, "id">, id?: string) {
     super(id);
@@ -61,7 +58,6 @@ export class Branch extends BaseEntity {
     this._operatingDays = props.operatingDays ?? [];
     this._services = props.services ?? [];
     this._employees = props.employees ?? [];
-    this._messages = props.messages ?? [];
   }
 
   get companyId(): string {
@@ -124,10 +120,6 @@ export class Branch extends BaseEntity {
     return this._employees;
   }
 
-  get messages(): Message[] {
-    return this._messages;
-  }
-
   serialize(): IBranch {
     return {
       id: this.id,
@@ -146,7 +138,6 @@ export class Branch extends BaseEntity {
       operatingDays: this.operatingDays,
       services: this.services,
       employees: this.employees,
-      messages: this.messages,
     };
   }
 

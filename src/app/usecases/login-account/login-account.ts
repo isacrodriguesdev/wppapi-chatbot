@@ -3,7 +3,6 @@ import { UnauthorizedError } from "src/shared/exceptions/unauthorized-error";
 import { Authorization } from "src/domain/interfaces/authorization";
 import { PasswordEncryption } from "src/domain/interfaces/password-encryption";
 import { EmployeeRepository } from "src/domain/repositories/employee-repository";
-import { EmployeeMapper } from "src/shared/infra/mappers/employee-mapper";
 
 @Injectable()
 export class LoginAccount {
@@ -32,7 +31,7 @@ export class LoginAccount {
     );
 
     return {
-      employee: EmployeeMapper.toDTO(employee),
+      employee: employee.serialize(),
       token,
     };
   }

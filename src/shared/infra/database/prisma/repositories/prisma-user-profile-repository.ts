@@ -1,10 +1,12 @@
 import { UserProfile, IUserProfile } from "src/domain/entities/user-profile";
 import { UserProfileRepository } from "src/domain/repositories/user-profile-repository";
-import { prisma } from "src/shared/infra/database/prisma/prisma-service";
+import { PrismaService } from "src/shared/infra/database/prisma/prisma.service";
 
 export class PrismaUserProfileRepository implements UserProfileRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
   async create(profile: UserProfile): Promise<any> {
-    const createdUser = await prisma.userProfile.create({
+    const createdUser = await this.prisma.userProfile.create({
       data: {
         id: profile.id,
         userId: profile.userId,
@@ -25,7 +27,7 @@ export class PrismaUserProfileRepository implements UserProfileRepository {
   }
 
   async update(id: string, profile: Partial<IUserProfile>): Promise<any> {
-    const updatedUser = await prisma.userProfile.update({
+    const updatedUser = await this.prisma.userProfile.update({
       where: { id },
       data: profile,
     });
