@@ -1,6 +1,7 @@
 import { BaseEntity } from "src/domain/entities/base-entity";
 import { Branch } from "src/domain/entities/branch";
 import { Company } from "src/domain/entities/company";
+import { User } from "src/domain/entities/user";
 
 export interface IEmployee {
   id?: string;
@@ -13,6 +14,7 @@ export interface IEmployee {
   deviceId?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  user?: User;
   company?: Company;
   branch?: Branch;
 }
@@ -27,6 +29,7 @@ export class Employee extends BaseEntity {
   private _deviceId?: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+  private _user?: User;
   private _company?: Company;
   private _branch?: Branch;
 
@@ -41,8 +44,10 @@ export class Employee extends BaseEntity {
     this._deviceId = props.deviceId;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
-    this._company = props.company;
-    this._branch = props.branch;
+
+    this._user = props.user ? new User(props.user, props.user.id) : undefined;
+    this._company = props.company ? new Company(props.company, props.company.id) : undefined;
+    this._branch = props.branch ? new Branch(props.branch, props.branch.id) : undefined;
   }
 
   get name(): string {
@@ -75,6 +80,10 @@ export class Employee extends BaseEntity {
 
   get updatedAt(): Date {
     return this._updatedAt;
+  }
+
+  get user(): User | undefined {
+    return this._user;
   }
 
   get company(): Company | undefined {

@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "companies" (
-    "id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "email" TEXT,
@@ -15,12 +15,12 @@ CREATE TABLE "companies" (
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "avatar" TEXT,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "companyId" TEXT NOT NULL,
+    "companyId" BYTEA NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -29,7 +29,7 @@ CREATE TABLE "users" (
 
 -- CreateTable
 CREATE TABLE "departments" (
-    "id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -40,9 +40,9 @@ CREATE TABLE "departments" (
 
 -- CreateTable
 CREATE TABLE "department_branches" (
-    "id" TEXT NOT NULL,
-    "branch_id" TEXT NOT NULL,
-    "department_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "branch_id" BYTEA NOT NULL,
+    "department_id" BYTEA NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -51,9 +51,9 @@ CREATE TABLE "department_branches" (
 
 -- CreateTable
 CREATE TABLE "department_employees" (
-    "id" TEXT NOT NULL,
-    "department_id" TEXT NOT NULL,
-    "employee_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "department_id" BYTEA NOT NULL,
+    "employee_id" BYTEA NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -61,22 +61,23 @@ CREATE TABLE "department_employees" (
 );
 
 -- CreateTable
-CREATE TABLE "attendments" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "department_id" TEXT NOT NULL,
+CREATE TABLE "tickets" (
+    "id" BYTEA NOT NULL,
+    "user_id" BYTEA NOT NULL,
+    "department_id" BYTEA NOT NULL,
+    "branch_id" BYTEA NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'open',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "attendments_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "tickets_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ticket_assignments" (
-    "id" TEXT NOT NULL,
-    "ticket_id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "ticket_id" BYTEA NOT NULL,
+    "user_id" BYTEA NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -85,8 +86,9 @@ CREATE TABLE "ticket_assignments" (
 
 -- CreateTable
 CREATE TABLE "ticket_messages" (
-    "id" TEXT NOT NULL,
-    "ticket_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "ticket_id" BYTEA NOT NULL,
+    "user_id" BYTEA NOT NULL,
     "type" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -97,8 +99,8 @@ CREATE TABLE "ticket_messages" (
 
 -- CreateTable
 CREATE TABLE "user_profiles" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "user_id" BYTEA NOT NULL,
     "email" TEXT,
     "cpf" TEXT,
     "birthDate" TIMESTAMP(3),
@@ -117,16 +119,16 @@ CREATE TABLE "user_profiles" (
 
 -- CreateTable
 CREATE TABLE "employees" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "user_id" BYTEA NOT NULL,
+    "branch_id" BYTEA NOT NULL,
     "phone" TEXT,
     "email" TEXT,
     "password" TEXT,
     "device_id" TEXT,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "roles" TEXT[] DEFAULT ARRAY['employee']::TEXT[],
-    "branch_id" TEXT NOT NULL,
-    "creaed_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "employees_pkey" PRIMARY KEY ("id")
@@ -134,12 +136,12 @@ CREATE TABLE "employees" (
 
 -- CreateTable
 CREATE TABLE "schedules" (
-    "id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "branch_id" BYTEA NOT NULL,
+    "user_id" BYTEA NOT NULL,
+    "service_id" BYTEA NOT NULL,
+    "employee_id" BYTEA,
     "status" TEXT NOT NULL DEFAULT 'scheduled',
-    "branch_id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "service_id" TEXT NOT NULL,
-    "employee_id" TEXT,
     "date" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -149,8 +151,8 @@ CREATE TABLE "schedules" (
 
 -- CreateTable
 CREATE TABLE "branch_operating_days" (
-    "id" TEXT NOT NULL,
-    "branch_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "branch_id" BYTEA NOT NULL,
     "week_day" TEXT NOT NULL,
     "start_time" TEXT NOT NULL,
     "end_time" TEXT NOT NULL,
@@ -162,8 +164,8 @@ CREATE TABLE "branch_operating_days" (
 
 -- CreateTable
 CREATE TABLE "services" (
-    "id" TEXT NOT NULL,
-    "branch_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "branch_id" BYTEA NOT NULL,
     "name" TEXT NOT NULL,
     "duration" INTEGER,
     "price" DOUBLE PRECISION,
@@ -175,8 +177,8 @@ CREATE TABLE "services" (
 
 -- CreateTable
 CREATE TABLE "branches" (
-    "id" TEXT NOT NULL,
-    "company_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "company_id" BYTEA NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "name" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
@@ -193,7 +195,7 @@ CREATE TABLE "branches" (
 
 -- CreateTable
 CREATE TABLE "predefined_messages" (
-    "id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
     "name" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "actions" TEXT[],
@@ -206,9 +208,9 @@ CREATE TABLE "predefined_messages" (
 
 -- CreateTable
 CREATE TABLE "predefined_message_options" (
-    "id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "message_id" BYTEA NOT NULL,
     "index" INTEGER NOT NULL,
-    "message_id" TEXT NOT NULL,
     "child" TEXT,
     "content" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -219,8 +221,8 @@ CREATE TABLE "predefined_message_options" (
 
 -- CreateTable
 CREATE TABLE "custom_messages" (
-    "id" TEXT NOT NULL,
-    "branch_id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
+    "branch_id" BYTEA NOT NULL,
     "name" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "group" TEXT,
@@ -233,9 +235,9 @@ CREATE TABLE "custom_messages" (
 
 -- CreateTable
 CREATE TABLE "custom_message_options" (
-    "id" TEXT NOT NULL,
+    "id" BYTEA NOT NULL,
     "index" INTEGER NOT NULL,
-    "message_id" TEXT NOT NULL,
+    "message_id" BYTEA NOT NULL,
     "child" TEXT,
     "content" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -260,19 +262,37 @@ CREATE UNIQUE INDEX "users_id_key" ON "users"("id");
 CREATE INDEX "users_companyId_phone_idx" ON "users"("companyId", "phone");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "departments_id_key" ON "departments"("id");
+
+-- CreateIndex
 CREATE INDEX "departments_name_idx" ON "departments"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "department_branches_id_key" ON "department_branches"("id");
 
 -- CreateIndex
 CREATE INDEX "department_branches_branch_id_department_id_idx" ON "department_branches"("branch_id", "department_id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "department_employees_id_key" ON "department_employees"("id");
+
+-- CreateIndex
 CREATE INDEX "department_employees_department_id_employee_id_idx" ON "department_employees"("department_id", "employee_id");
 
 -- CreateIndex
-CREATE INDEX "attendments_user_id_department_id_status_idx" ON "attendments"("user_id", "department_id", "status");
+CREATE UNIQUE INDEX "tickets_id_key" ON "tickets"("id");
+
+-- CreateIndex
+CREATE INDEX "tickets_user_id_department_id_status_idx" ON "tickets"("user_id", "department_id", "status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ticket_assignments_id_key" ON "ticket_assignments"("id");
 
 -- CreateIndex
 CREATE INDEX "ticket_assignments_ticket_id_user_id_idx" ON "ticket_assignments"("ticket_id", "user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ticket_messages_id_key" ON "ticket_messages"("id");
 
 -- CreateIndex
 CREATE INDEX "ticket_messages_ticket_id_idx" ON "ticket_messages"("ticket_id");
@@ -362,22 +382,31 @@ ALTER TABLE "department_employees" ADD CONSTRAINT "department_employees_employee
 ALTER TABLE "department_employees" ADD CONSTRAINT "department_employees_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "department_branches"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "attendments" ADD CONSTRAINT "attendments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "attendments" ADD CONSTRAINT "attendments_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "department_branches"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_department_id_fkey" FOREIGN KEY ("department_id") REFERENCES "departments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_branch_id_fkey" FOREIGN KEY ("branch_id") REFERENCES "branches"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ticket_assignments" ADD CONSTRAINT "ticket_assignments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ticket_assignments" ADD CONSTRAINT "ticket_assignments_ticket_id_fkey" FOREIGN KEY ("ticket_id") REFERENCES "attendments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ticket_assignments" ADD CONSTRAINT "ticket_assignments_ticket_id_fkey" FOREIGN KEY ("ticket_id") REFERENCES "tickets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ticket_messages" ADD CONSTRAINT "ticket_messages_ticket_id_fkey" FOREIGN KEY ("ticket_id") REFERENCES "attendments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ticket_messages" ADD CONSTRAINT "ticket_messages_ticket_id_fkey" FOREIGN KEY ("ticket_id") REFERENCES "tickets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ticket_messages" ADD CONSTRAINT "ticket_messages_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "user_profiles" ADD CONSTRAINT "user_profiles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "employees" ADD CONSTRAINT "employees_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "employees" ADD CONSTRAINT "employees_branch_id_fkey" FOREIGN KEY ("branch_id") REFERENCES "branches"("id") ON DELETE CASCADE ON UPDATE CASCADE;

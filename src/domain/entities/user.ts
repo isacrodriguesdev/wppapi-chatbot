@@ -17,7 +17,7 @@ export class User extends BaseEntity {
   private _avatar?: string;
   private _phone: string;
   private _companyId: string;
-  private _userProfile: UserProfile;
+  private _profile: UserProfile;
   private _createdAt: Date;
   private _updatedAt: Date;
 
@@ -30,7 +30,7 @@ export class User extends BaseEntity {
     this._avatar = user.avatar;
     this._phone = user.phone;
     this._companyId = user.companyId;
-    this._userProfile = user.profile ?? new UserProfile({ userId: this.id });
+    this._profile = user.profile ?? new UserProfile({ userId: this.id });
     this._createdAt = user.createdAt ?? new Date();
     this._updatedAt = user.updatedAt ?? new Date();
   }
@@ -56,7 +56,7 @@ export class User extends BaseEntity {
   }
 
   get profile() {
-    return this._userProfile;
+    return this._profile;
   }
 
   get createdAt() {
@@ -74,7 +74,6 @@ export class User extends BaseEntity {
       phone: this._phone,
       companyId: this._companyId,
       createdAt: this._createdAt,
-      updatedAt: this._updatedAt,
     };
   }
 }

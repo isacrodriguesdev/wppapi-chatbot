@@ -4,7 +4,7 @@ import { NewMessageHandler } from "src/app/hadlers/new-message/new-message-handl
 
 @WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private rooms: { [key: string]: string[] } = {};
+  private topics: { [key: string]: string[] } = {};
 
   constructor(private readonly newMessageHandler: NewMessageHandler) {}
 
@@ -14,26 +14,26 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(socket: Socket) {
     console.log("Client disconnected:", socket.id);
-    for (const room in this.rooms) {
-      if (this.rooms[room].includes(socket.id)) {
-        this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
-        socket.leave(room);
+    for (const topic in this.topics) {
+      if (this.topics[topic].includes(socket.id)) {
+        this.topics[topic] = this.topics[topic].filter((id) => id !== socket.id);
+        socket.leave(topic);
       }
     }
   }
 
   @SubscribeMessage("joinRoom")
-  onJoinRoom(socket: Socket, room: string): void {
-    if (!this.rooms[room]) {
-      this.rooms[room] = [];
+  onJoinRoom(socket: Socket, topic: string): void {
+    if (!this.topics[topic]) {
+      this.topics[topic] = [];
     }
 
-    if (!this.rooms[room].includes(socket.id)) {
-      this.rooms[room].push(socket.id);
-      socket.join(room);
+    if (!this.topics[topic].includes(socket.id)) {
+      this.topics[topic].push(socket.id);
+      socket.join(topic);
     }
 
-    console.log(`Client ${socket.id} joined room ${room}`);
+    console.log(`Client ${socket.id} joined topic ${topic}`);
   }
 
   @SubscribeMessage("newMessage")
@@ -42,7 +42,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     try {
       await this.newMessageHandler.handle(message);
-      socket.to(message.room).emit("newMessage", message);
+      socket.to(message.topic).emit("newMessage", message);
     } catch (error) {}
   }
 }

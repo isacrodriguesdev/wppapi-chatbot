@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Company {
-  id        String   @id @unique @default(cuid())
+  id        Bytes    @id @unique @db.ByteA
   name      String
   phone     String
   email     String?  @unique
@@ -26,12 +26,12 @@ model Company {
 }
 
 model User {
-  id                String             @id @unique @default(cuid())
+  id                Bytes              @id @unique @db.ByteA
   name              String
   phone             String
   avatar            String?
   active            Boolean            @default(true)
-  companyId         String
+  companyId         Bytes              @db.ByteA
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
   company           Company            @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -40,13 +40,14 @@ model User {
   tickets           Ticket[]
   ticketAssignments TicketAssignment[]
   ticketMessages    TicketMessage[]
+  employees         Employee[]
 
   @@index([companyId, phone])
   @@map("users")
 }
 
 model Department {
-  id                String             @id @default(cuid())
+  id                Bytes              @id @unique @db.ByteA
   name              String
   description       String?
   createdAt         DateTime           @default(now()) @map("created_at")
@@ -59,9 +60,9 @@ model Department {
 }
 
 model DepartmentBranch {
-  id           String   @id @default(cuid())
-  branchId     String   @map("branch_id")
-  departmentId String   @map("department_id")
+  id           Bytes    @id @unique @db.ByteA
+  branchId     Bytes    @map("branch_id") @db.ByteA
+  departmentId Bytes    @map("department_id") @db.ByteA
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -74,9 +75,9 @@ model DepartmentBranch {
 }
 
 model DepartmentEmployee {
-  id           String   @id @default(cuid())
-  departmentId String   @map("department_id")
-  employeeId   String   @map("employee_id")
+  id           Bytes    @id @unique @db.ByteA
+  departmentId Bytes    @map("department_id") @db.ByteA
+  employeeId   Bytes    @map("employee_id") @db.ByteA
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -88,10 +89,10 @@ model DepartmentEmployee {
 }
 
 model Ticket {
-  id           String   @id @default(cuid()) // pode ser usado como canal do socket
-  userId       String   @map("user_id")
-  departmentId String   @map("department_id")
-  branchId     String   @map("branch_id")
+  id           Bytes    @id @unique @db.ByteA
+  userId       Bytes    @map("user_id") @db.ByteA
+  departmentId Bytes    @map("department_id") @db.ByteA
+  branchId     Bytes    @map("branch_id") @db.ByteA
   status       String   @default("open") // open, assigned, closed, done, unresolved, resolved, canceled
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -100,17 +101,17 @@ model Ticket {
   department Department @relation(fields: [departmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   branch     Branch     @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  ticketAssignments  TicketAssignment[]
-  ticketMessages     TicketMessage[]
+  ticketAssignments TicketAssignment[]
+  ticketMessages    TicketMessage[]
 
   @@index([userId, departmentId, status])
-  @@map("tickets") // alterar para tickets
+  @@map("tickets")
 }
 
 model TicketAssignment {
-  id        String   @id @default(cuid())
-  ticketId  String   @map("ticket_id")
-  userId    String   @map("user_id")
+  id        Bytes    @id @unique @db.ByteA
+  ticketId  Bytes    @map("ticket_id") @db.ByteA
+  userId    Bytes    @map("user_id") @db.ByteA
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -121,11 +122,10 @@ model TicketAssignment {
   @@map("ticket_assignments")
 }
 
-// Onde está o userId (Quem enviou a mensagem)
 model TicketMessage {
-  id        String   @id @default(cuid())
-  ticketId  String   @map("ticket_id")
-  userId    String   @map("user_id")
+  id        Bytes    @id @unique @db.ByteA
+  ticketId  Bytes    @map("ticket_id") @db.ByteA
+  userId    Bytes    @map("user_id") @db.ByteA
   type      String // text, image, video, audio, file
   content   String
   createdAt DateTime @default(now()) @map("created_at")
@@ -139,8 +139,8 @@ model TicketMessage {
 }
 
 model UserProfile {
-  id           String    @id @unique @default(cuid())
-  userId       String    @map("user_id")
+  id           Bytes     @id @unique @db.ByteA
+  userId       Bytes     @map("user_id") @db.ByteA
   email        String?   @unique
   cpf          String?   @unique
   birthDate    DateTime?
@@ -160,18 +160,19 @@ model UserProfile {
 }
 
 model Employee {
-  id        String   @id @unique @default(cuid())
-  userId    String   @map("user_id")
+  id        Bytes    @id @unique @db.ByteA
+  userId    Bytes    @map("user_id") @db.ByteA
+  branchId  Bytes    @map("branch_id") @db.ByteA
   phone     String?
   email     String?  @unique
   password  String?
   deviceId  String?  @map("device_id")
   active    Boolean  @default(true)
   roles     String[] @default(["employee"])
-  branchId  String   @map("branch_id")
-  createdAt DateTime @default(now()) @map("creaed_at")
+  createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   schedules           Schedule[]
   departmentEmployees DepartmentEmployee[]
@@ -181,12 +182,12 @@ model Employee {
 }
 
 model Schedule {
-  id         String   @id @unique @default(cuid())
+  id         Bytes    @id @unique @db.ByteA
+  branchId   Bytes    @map("branch_id") @db.ByteA
+  userId     Bytes    @map("user_id") @db.ByteA
+  serviceId  Bytes    @map("service_id") @db.ByteA
+  employeeId Bytes?   @map("employee_id") @db.ByteA
   status     String   @default("scheduled")
-  branchId   String   @map("branch_id")
-  userId     String   @map("user_id")
-  serviceId  String   @map("service_id")
-  employeeId String?  @map("employee_id")
   date       DateTime
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
@@ -201,8 +202,8 @@ model Schedule {
 }
 
 model BranchOperatingDay {
-  id        String   @id @unique @default(cuid())
-  branchId  String   @map("branch_id")
+  id        Bytes    @id @unique @db.ByteA
+  branchId  Bytes    @map("branch_id") @db.ByteA
   weekDay   String   @map("week_day")
   startTime String   @map("start_time")
   endTime   String   @map("end_time")
@@ -215,8 +216,8 @@ model BranchOperatingDay {
 }
 
 model Service {
-  id        String     @id @unique @default(cuid())
-  branchId  String     @map("branch_id")
+  id        Bytes      @id @unique @db.ByteA
+  branchId  Bytes      @map("branch_id") @db.ByteA
   name      String
   duration  Int?
   price     Float?
@@ -230,8 +231,8 @@ model Service {
 }
 
 model Branch {
-  id                String               @id @unique @default(cuid())
-  companyId         String               @map("company_id")
+  id                Bytes                @id @unique @db.ByteA
+  companyId         Bytes                @map("company_id") @db.ByteA
   active            Boolean              @default(true)
   name              String
   phone             String
@@ -243,6 +244,7 @@ model Branch {
   createdAt         DateTime             @default(now()) @map("created_at")
   updatedAt         DateTime             @updatedAt @map("updated_at")
   company           Company              @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   schedules         Schedule[]
   operatingDays     BranchOperatingDay[]
   services          Service[]
@@ -256,7 +258,7 @@ model Branch {
 }
 
 model PredefinedMessage {
-  id        String                    @id @unique @default(cuid())
+  id        Bytes                     @id @unique @db.ByteA
   name      String
   content   String
   actions   String[]
@@ -270,9 +272,9 @@ model PredefinedMessage {
 }
 
 model PredefinedMessageOption {
-  id        String            @id @unique @default(cuid())
+  id        Bytes             @id @unique @db.ByteA
+  messageId Bytes             @map("message_id") @db.ByteA
   index     Int
-  messageId String            @map("message_id")
   child     String?
   content   String
   createdAt DateTime          @default(now()) @map("created_at")
@@ -284,8 +286,8 @@ model PredefinedMessageOption {
 }
 
 model CustomMessage {
-  id        String                @id @unique @default(cuid())
-  branchId  String                @map("branch_id")
+  id        Bytes                 @id @unique @db.ByteA
+  branchId  Bytes                 @map("branch_id") @db.ByteA
   name      String
   content   String
   group     String?
@@ -300,9 +302,9 @@ model CustomMessage {
 }
 
 model CustomMessageOption {
-  id        String        @id @unique @default(cuid())
+  id        Bytes         @id @unique @db.ByteA
   index     Int
-  messageId String        @map("message_id")
+  messageId Bytes         @map("message_id") @db.ByteA
   child     String?
   content   String
   createdAt DateTime      @default(now()) @map("created_at")

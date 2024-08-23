@@ -8,6 +8,8 @@ import { PrismaEmployeeRepository } from "src/shared/infra/database/prisma/repos
 import { PrismaUserRepository } from "src/shared/infra/database/prisma/repositories/prisma-user-repository";
 import { TicketRepository } from "src/domain/repositories/ticket-repository";
 import { PrismaTicketRepository } from "src/shared/infra/database/prisma/repositories/prisma-ticket-repository";
+import { PrismaTicketMessageRepository } from "src/shared/infra/database/prisma/repositories/prisma-ticket-message-repository";
+import { TicketMessageRepository } from "src/domain/repositories/ticket-message-repository";
 
 @Module({
   imports: [],
@@ -30,7 +32,11 @@ import { PrismaTicketRepository } from "src/shared/infra/database/prisma/reposit
       provide: TicketRepository,
       useClass: PrismaTicketRepository,
     },
+    {
+      provide: TicketMessageRepository,
+      useClass: PrismaTicketMessageRepository,
+    },
   ],
-  exports: [ScheduleRepository, EmployeeRepository, UserRepository, TicketRepository],
+  exports: [ScheduleRepository, EmployeeRepository, UserRepository, TicketRepository, TicketMessageRepository],
 })
 export class DatabaseModule {}

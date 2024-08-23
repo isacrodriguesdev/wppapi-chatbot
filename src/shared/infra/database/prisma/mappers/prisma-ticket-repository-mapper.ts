@@ -21,6 +21,8 @@ export class PrismaTicketRepositoryMapper {
         status: ticket.status,
         createdAt: ticket.createdAt,
         updatedAt: ticket.updatedAt,
+        user: ticket.user,
+        department: ticket.department,
       },
       ticket.id,
     );

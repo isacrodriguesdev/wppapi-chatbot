@@ -26,7 +26,7 @@ export class LoginAccount {
     }
 
     const token = await this.authorization.sign(
-      { id: employee.id, email: employee.email, branchId: employee.branchId },
+      { id: employee.user.id, email: employee.email, branchId: employee.branchId },
       "365d",
     );
 

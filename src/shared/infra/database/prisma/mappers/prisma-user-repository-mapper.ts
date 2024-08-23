@@ -10,7 +10,6 @@ export class PrismaUserRepositoryMapper {
         companyId: user.companyId,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        profile: user.profile ? PrismaUserProfileRepositoryMapper.toDomain(user.profile) : null,
       },
       user.id,
     );

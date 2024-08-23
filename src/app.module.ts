@@ -13,6 +13,9 @@ import { DatabaseModule } from "src/shared/infra/database/database.module";
 import { EncryptionModule } from "src/shared/infra/encryption/encryption.module";
 import { ServiceModule } from "src/shared/services/service.module";
 import { ScheduleController } from "src/controllers/schedule.controller";
+import { CreateTicketMessage } from "src/app/usecases/create-ticket-message/create-ticket-message";
+import { NewMessageHandler } from "src/app/hadlers/new-message/new-message-handler";
+import { FetchTicket } from "src/app/usecases/fetch-ticket/fetch-ticket";
 
 @Module({
   imports: [DatabaseModule, AuthModule, EncryptionModule, ServiceModule],
@@ -25,6 +28,7 @@ import { ScheduleController } from "src/controllers/schedule.controller";
     GetScheduleById,
     GetLatestSchedule,
     UpdateEmployee,
+    FetchTicket,
   ],
   exports: [],
 })

@@ -1,3 +1,4 @@
+import { BaseEntity } from "src/domain/entities/base-entity";
 import { Branch } from "src/domain/entities/branch";
 import { Company } from "src/domain/entities/company";
 import { CompanyRepository } from "src/domain/repositories/company-repository";
@@ -10,7 +11,7 @@ export class PrismaCompanyRepository implements CompanyRepository {
 
   async findById(companyId: string): Promise<Company> {
     const company = await this.prisma.company.findUnique({
-      where: { id: companyId },
+      where: { id: BaseEntity.toBuffer(companyId) },
       include: { branchs: true },
     });
 
@@ -27,7 +28,7 @@ export class PrismaCompanyRepository implements CompanyRepository {
 
   async fetchBranches(companyId: string): Promise<Branch[]> {
     const branches = await this.prisma.branch.findMany({
-      where: { companyId },
+      where: { companyId: BaseEntity.toBuffer(companyId) },
       include: { employees: true },
     });
 

@@ -37,4 +37,13 @@ export class Department extends BaseEntity {
   get updatedAt() {
     return this._updatedAt;
   }
+
+  serialize() {
+    return {
+      id: this.id,
+      name: this._name,
+      description: this._description,
+      createdAt: this._createdAt,
+    };
+  }
 }
