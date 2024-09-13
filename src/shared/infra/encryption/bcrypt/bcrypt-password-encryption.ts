@@ -1,4 +1,4 @@
-import { PasswordEncryption } from "src/domain/interfaces/password-encryption";
+import { PasswordEncryption } from "@/domain/interfaces/PasswordEncryption";
 import * as bcrypt from "bcrypt";
 
 export class BcryptPasswordEncryption implements PasswordEncryption {

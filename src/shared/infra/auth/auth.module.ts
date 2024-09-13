@@ -2,9 +2,9 @@ import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
-import { Authorization } from "src/domain/interfaces/authorization";
-import { JwtStrategy } from "src/shared/infra/auth/passport-jwt/jwt.strategy";
-import { JwtService } from "src/shared/infra/auth/passport-jwt/jwt.service";
+import { Authorization } from "@/domain/interfaces/Authorization";
+import { JwtStrategy } from "@/shared/infra/auth/passport-jwt/jwt.strategy";
+import { JwtService } from "@/shared/infra/auth/passport-jwt/jwt.service";
 
 @Module({
   imports: [

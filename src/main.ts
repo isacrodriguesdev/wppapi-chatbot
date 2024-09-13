@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { NestFactory } from "@nestjs/core";
-import { AppModule } from "src/app.module";
+import { AppModule } from "@/app.module";
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
@@ -8,6 +8,6 @@ async function bootstrap(): Promise<void> {
       origin: "*",
     },
   });
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();

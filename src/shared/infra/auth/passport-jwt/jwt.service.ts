@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService as NestJwtService } from "@nestjs/jwt";
-import { Authorization } from "src/domain/interfaces/authorization";
+import { Authorization } from "@/domain/interfaces/Authorization";
 
 @Injectable()
 export class JwtService extends Authorization {

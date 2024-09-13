@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from "@nestjs/common";
-import { LoginAccount } from "src/app/usecases/login-account/login-account";
+import { LoginAccount } from "@/app/usecases/LoginAccount";
 
-@Controller("account")
+@Controller("/api/v1/account")
 export class AccountController {
   constructor(private readonly loginAccount: LoginAccount) {}
 

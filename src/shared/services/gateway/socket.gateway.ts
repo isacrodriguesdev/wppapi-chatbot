@@ -1,12 +1,19 @@
-import { WebSocketGateway, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect } from "@nestjs/websockets";
-import { Socket } from "socket.io";
-import { NewMessageHandler } from "src/app/hadlers/new-message/new-message-handler";
+import { Server, Socket } from "socket.io";
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketServer,
+} from "@nestjs/websockets";
 
 @WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
+
   private topics: { [key: string]: string[] } = {};
 
-  constructor(private readonly newMessageHandler: NewMessageHandler) {}
+  //constructor(private readonly newMessageHandler: NewMessageHandler) {}
 
   handleConnection(socket: Socket, ...args: any[]) {
     console.log("Client connected:", socket.id);
@@ -41,8 +48,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const message = JSON.parse(data);
 
     try {
-      await this.newMessageHandler.handle(message);
+      //await this.newMessageHandler.handle(message);
       socket.to(message.topic).emit("newMessage", message);
     } catch (error) {}
+  }
+
+  // send message to whatsapp
+  emit(event: string, message: { topic: string; payload: any }): void {
+    this.server.to(message.topic).emit(event, message);
   }
 }

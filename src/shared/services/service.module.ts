@@ -1,12 +1,18 @@
 import { Module } from "@nestjs/common";
-import { NewMessageHandler } from "src/app/hadlers/new-message/new-message-handler";
-import { CreateTicketMessage } from "src/app/usecases/create-ticket-message/create-ticket-message";
-import { DatabaseModule } from "src/shared/infra/database/database.module";
-import { SocketGateway } from "src/shared/services/gateway/socket.gateway";
+import { PhoneNumberHelper } from "@/interfaces/PhoneNumberHelper";
+import { PhoneNumberBRHelper } from "@/shared/helpers/PhoneNumberBRHelper";
+import { DatabaseModule } from "@/shared/infra/database/database.module";
+import { SocketGateway } from "@/shared/services/gateway/socket.gateway";
 
 @Module({
   imports: [DatabaseModule],
-  providers: [SocketGateway, NewMessageHandler, CreateTicketMessage],
-  exports: [],
+  providers: [
+    SocketGateway,
+    {
+      useClass: PhoneNumberBRHelper,
+      provide: PhoneNumberHelper,
+    },
+  ],
+  exports: [SocketGateway],
 })
 export class ServiceModule {}
