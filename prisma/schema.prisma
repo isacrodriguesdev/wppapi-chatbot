@@ -35,7 +35,7 @@ model Branch {
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   schedules         Schedule[]
-  branchWorkHours   BranchWorkHours[]
+  branchWorkHours   BranchWorkHour[]
   services          Service[]
   employees         Employee[]
   branchDepartments DepartmentBranch[]
@@ -196,6 +196,7 @@ model Employee {
   branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   departmentEmployees DepartmentEmployee[]
   employeeSchedules   EmployeeSchedule[]
+  employeeServices    EmployeeService[]
 
   @@index([userId, email, phone])
   @@map("employees")
@@ -232,7 +233,19 @@ model EmployeeSchedule {
   @@map("employee_schedules")
 }
 
-model BranchWorkHours {
+model EmployeeService {
+  id         Bytes @id @unique @db.ByteA
+  employeeId Bytes @map("employee_id") @db.ByteA
+  serviceId  Bytes @map("service_id") @db.ByteA
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([employeeId, serviceId])
+  @@map("employee_services")
+}
+
+model BranchWorkHour {
   id        Bytes  @id @unique @db.ByteA
   branchId  Bytes  @map("branch_id") @db.ByteA
   weekday   String @map("weekday")
@@ -245,16 +258,17 @@ model BranchWorkHours {
 }
 
 model Service {
-  id                 Bytes                @id @unique @db.ByteA
-  branchId           Bytes                @map("branch_id") @db.ByteA
-  name               String
-  duration           Int                  @default(0)
-  price              Float
-  createdAt          DateTime             @default(now()) @map("created_at")
-  updatedAt          DateTime             @updatedAt @map("updated_at")
-  branch             Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  schedules          Schedule[]
-  TransactionService TransactionService[]
+  id                  Bytes                @id @unique @db.ByteA
+  branchId            Bytes                @map("branch_id") @db.ByteA
+  name                String
+  duration            Int                  @default(0)
+  price               Float
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  schedules           Schedule[]
+  transactionServices TransactionService[]
+  employeeServices    EmployeeService[]
 
   @@index([branchId])
   @@map("services")
@@ -263,6 +277,7 @@ model Service {
 model MessageGroup {
   id         Bytes     @id @unique @db.ByteA
   name       String    @unique
+  bundle     String?
   messages   Message[] @relation("GroupMessages") // Mensagens que pertencem a este grupo
   defaultFor Message[] @relation("DefaultGroup") // Mensagens que usam este grupo como default
 
@@ -288,7 +303,7 @@ model Message {
   type               String  @default("text") // text, image, video, audio, file
   groupId            Bytes   @map("group_id") @db.ByteA
   destinationGroupId Bytes?  @map("destination_group_id") @db.ByteA
-  bundle             String?
+  //bundle             String?
   delay              BigInt  @default(500) // Tempo de espera para enviar a mensagem
   content            String
   sequence           Int // Define a ordem das mensagens
@@ -298,7 +313,7 @@ model Message {
   options                 MessageOption[]
   actions                 MessageAction[]
 
-  @@index([groupId, sequence, bundle])
+  @@index([groupId, sequence])
   @@map("messages")
 }
 
