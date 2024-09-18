@@ -52,11 +52,13 @@ model Branch {
 model BranchUserRequest {
   id        Bytes    @id @unique @db.ByteA
   branchId  Bytes    @map("branch_id") @db.ByteA
+  groupId   Bytes    @map("group_id") @db.ByteA
   name      String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  branch Branch @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  branch Branch       @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  group  MessageGroup @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("branch_user_requests")
 }
@@ -283,6 +285,7 @@ model MessageGroup {
 
   interactions MessageInteraction[]
   options      MessageOption[]
+  userRequests BranchUserRequest[]
 
   @@index([name])
   @@map("message_groups")
@@ -299,12 +302,12 @@ model Action {
 }
 
 model Message {
-  id                 Bytes   @id @unique @db.ByteA
-  type               String  @default("text") // text, image, video, audio, file
-  groupId            Bytes   @map("group_id") @db.ByteA
-  destinationGroupId Bytes?  @map("destination_group_id") @db.ByteA
+  id                 Bytes  @id @unique @db.ByteA
+  type               String @default("text") // text, image, video, audio, file
+  groupId            Bytes  @map("group_id") @db.ByteA
+  destinationGroupId Bytes? @map("destination_group_id") @db.ByteA
   //bundle             String?
-  delay              BigInt  @default(500) // Tempo de espera para enviar a mensagem
+  delay              BigInt @default(500) // Tempo de espera para enviar a mensagem
   content            String
   sequence           Int // Define a ordem das mensagens
 
